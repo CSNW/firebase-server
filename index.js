@@ -44,7 +44,7 @@ function normalizePath(fullPath) {
 	};
 }
 
-function FirebaseServer(port, name, data) {
+function FirebaseServer(port, name, data, server) {
 	this.Firebase = firebaseCopy();
 	this.name = name || 'mock.firebase.server';
 	this.Firebase.goOffline();
@@ -53,7 +53,8 @@ function FirebaseServer(port, name, data) {
 	this.baseRef.set(data || null);
 
 	this._wss = new WebSocketServer({
-		port: port
+		port: port,
+		server: server
 	});
 
 	this._clock = new TestableClock();
