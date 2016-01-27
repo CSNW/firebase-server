@@ -14,7 +14,7 @@ var firebaseHash = require('./lib/firebaseHash');
 var TestableClock = require('./lib/testable-clock');
 var TokenValidator = require('./lib/token-validator');
 var Promise = require('native-or-bluebird');
-var firebaseCopy = require('firebase-copy');
+var Firebase = require('../../lib/firebase-debug-2.3.2.js');
 var _log = require('debug')('firebase-server');
 
 function getSnap(ref) {
@@ -45,7 +45,7 @@ function normalizePath(fullPath) {
 }
 
 function FirebaseServer(port, name, data, server) {
-	this.Firebase = firebaseCopy();
+	this.Firebase = Firebase;
 	this.name = name || 'mock.firebase.server';
 	this.Firebase.goOffline();
 	this.baseRef = new this.Firebase('ws://fakeserver.firebaseio.test');
