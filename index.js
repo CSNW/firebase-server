@@ -14,7 +14,7 @@ var firebaseHash = require('./lib/firebaseHash');
 var TestableClock = require('./lib/testable-clock');
 var TokenValidator = require('./lib/token-validator');
 var Promise = require('native-or-bluebird');
-var Firebase = require('../../lib/firebase-debug-2.3.2.js');
+var Firebase = require('firebase');
 var _log = require('debug')('firebase-server');
 
 function getSnap(ref) {

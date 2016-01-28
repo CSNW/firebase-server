@@ -36,7 +36,7 @@
     "coveralls": "2.11.4",
     "eslint": "1.7.3",
     "faye-websocket": "0.10.0",
-    "firebase": "2.3.1",
+    "firebase": "git+https://github.com/CSNW/firebase-bower.git#v2.4.0-allow-other-servers",
     "firebase-token-generator": "^2.0.0",
     "istanbul": "0.4.0",
     "mocha": "2.3.3",
@@ -44,7 +44,6 @@
   },
   "dependencies": {
     "debug": "^2.2.0",
-    "firebase-copy": "0.2.0",
     "jwt-simple": "^0.3.1",
     "lodash": "3.10.1",
     "native-or-bluebird": "1.2.0",
