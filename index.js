@@ -1,7 +1,7 @@
 /*
- * firebase-server 0.5.0
+ * firebase-server 0.7.0
  * License: MIT.
- * Copyright (C) 2013, 2014, 2015, Uri Shaked.
+ * Copyright (C) 2013, 2014, 2015, 2016, Uri Shaked.
  */
 
 'use strict';
@@ -13,9 +13,15 @@ var RuleDataSnapshot = require('targaryen/lib/rule-data-snapshot');
 var firebaseHash = require('./lib/firebaseHash');
 var TestableClock = require('./lib/testable-clock');
 var TokenValidator = require('./lib/token-validator');
-var Promise = require('native-or-bluebird');
-var Firebase = require('firebase');
+var Promise = require('any-promise');
+var firebase = require('firebase');
 var _log = require('debug')('firebase-server');
+
+// In order to produce new Firebase clients that do not conflict with existing
+// instances of the Firebase client, each one must have a unique name.
+// We use this incrementing number to ensure that each Firebase App name we
+// create is unique.
+var serverID = 0;
 
 function getSnap(ref) {
 	return new Promise(function (resolve) {
@@ -47,8 +53,32 @@ function normalizePath(fullPath) {
 function FirebaseServer(port, name, data, server) {
 	this.Firebase = Firebase;
 	this.name = name || 'mock.firebase.server';
-	this.Firebase.goOffline();
-	this.baseRef = new this.Firebase('ws://fakeserver.firebaseio.test');
+
+	// Firebase is more than just a "database" now; the "realtime database" is
+	// just one of many services provided by a Firebase "App" container.
+	// The Firebase library must be initialized with an App, and that app
+	// must have a name - either a name you choose, or '[DEFAULT]' which
+	// the library will substitute for you if you do not provide one.
+	// An important aspect of App names is that multiple instances of the
+	// Firebase client with the same name will share a local cache instead of
+	// talking "through" our server. So to prevent that from happening, we are
+	// choosing a probably-unique name that a developer would not choose for
+	// their "real" Firebase client instances.
+	var appName = 'firebase-server-internal-' + this.name + '-' + serverID++;
+
+	// We must pass a "valid looking" configuration to initializeApp for its
+	// internal checks to pass.
+	var config = {
+		databaseURL: 'ws://fakeserver.firebaseio.test',
+		serviceAccount: {
+			'private_key': 'fake',
+			'client_email': 'fake'
+		}
+	};
+	this.app = firebase.initializeApp(config, appName);
+	this.app.database().goOffline();
+
+	this.baseRef = this.app.database().ref();
 
 	this.baseRef.set(data || null);
 
@@ -93,7 +123,7 @@ FirebaseServer.prototype = {
 		}
 
 		function pushData(path, data) {
-			send({d: {a: 'd', b: {p: path, d: data, t: null}}, t: 'd'});
+			send({d: {a: 'd', b: {p: path, d: data}}, t: 'd'});
 		}
 
 		function permissionDenied(requestId) {
@@ -101,7 +131,7 @@ FirebaseServer.prototype = {
 		}
 
 		function replaceServerTimestamp(data) {
-			if (_.isEqual(data, server.Firebase.ServerValue.TIMESTAMP)) {
+			if (_.isEqual(data, firebase.database.ServerValue.TIMESTAMP)) {
 				return server._clock();
 			} else if (_.isObject(data)) {
 				return _.mapValues(data, replaceServerTimestamp);
@@ -111,7 +141,7 @@ FirebaseServer.prototype = {
 		}
 
 		function ruleSnapshot(fbRef) {
-			return exportData(fbRef.root()).then(function (exportVal) {
+			return exportData(fbRef.root).then(function (exportVal) {
 				return new RuleDataSnapshot(RuleDataSnapshot.convert(exportVal));
 			});
 		}
@@ -234,6 +264,10 @@ FirebaseServer.prototype = {
 		}
 
 		function handleAuth(requestId, credential) {
+			if (server._authSecret === credential) {
+				return send({t: 'd', d: {r: requestId, b: {s: 'ok', d: TokenValidator.normalize({ auth: null, admin: true, exp: null }) }}});
+			}
+
 			try {
 				var decoded = server._tokenValidator.decode(credential);
 				authToken = credential;
@@ -243,13 +277,32 @@ FirebaseServer.prototype = {
 			}
 		}
 
+		function accumulateFrames(data){
+			//Accumulate buffer until websocket frame is complete
+			if (typeof ws.frameBuffer == 'undefined'){
+				ws.frameBuffer = '';
+			}
+
+			try {
+				var parsed = JSON.parse(ws.frameBuffer + data);
+				ws.frameBuffer = '';
+				return parsed;
+			} catch(e) {
+				ws.frameBuffer += data;
+			}
+
+			return '';
+		}
+
 		ws.on('message', function (data) {
 			_log('Client message: ' + data);
 			if (data === 0) {
 				return;
 			}
-			var parsed = JSON.parse(data);
-			if (parsed.t === 'd') {
+
+			var parsed = accumulateFrames(data);
+
+			if (parsed && parsed.t === 'd') {
 				var path;
 				if (typeof parsed.d.b.p !== 'undefined') {
 					path = parsed.d.b.p.substr(1);
@@ -266,7 +319,7 @@ FirebaseServer.prototype = {
 				if (parsed.d.a === 'p') {
 					handleSet(requestId, path, fbRef, parsed.d.b.d, parsed.d.b.h);
 				}
-				if (parsed.d.a === 'auth') {
+				if (parsed.d.a === 'auth' || parsed.d.a === 'gauth') {
 					handleAuth(requestId, parsed.d.b.cred);
 				}
 			}
@@ -302,8 +355,8 @@ FirebaseServer.prototype = {
 		return exportData(ref || this.baseRef);
 	},
 
-	close: function () {
-		this._wss.close();
+	close: function (callback) {
+		this._wss.close(callback);
 	},
 
 	setTime: function (newTime) {
@@ -311,6 +364,7 @@ FirebaseServer.prototype = {
 	},
 
 	setAuthSecret: function (newSecret) {
+		this._authSecret = newSecret;
 		this._tokenValidator.setSecret(newSecret);
 	}
 };

@@ -3,7 +3,7 @@ firebase-server
 
 Firebase Web Socket Protocol Server. Useful for emulating the Firebase server in tests.
 
-Copyright (C) 2013, 2014, 2015, Uri Shaked <uri@urish.org>
+Copyright (C) 2013, 2014, 2015, 2016, Uri Shaked <uri@urish.org>
 
 [![Build Status](https://travis-ci.org/urish/firebase-server.png?branch=master)](https://travis-ci.org/urish/firebase-server)
 [![Coverage Status](https://coveralls.io/repos/urish/firebase-server/badge.png)](https://coveralls.io/r/urish/firebase-server)
@@ -21,7 +21,7 @@ Usage Example
 ```js
 var FirebaseServer = require('firebase-server');
 
-new FirebaseServer(5000, 'test.firebaseio.com', {
+new FirebaseServer(5000, 'localhost.firebaseio.test', {
 	states: {
 		CA: 'California',
 		AL: 'Alabama',
@@ -33,25 +33,36 @@ new FirebaseServer(5000, 'test.firebaseio.com', {
 After running this server, you can create a Firebase client instance that connects to it:
 
 ```js
-var client = new Firebase('ws://test.firebaseio.com:5000');
+var client = new Firebase('ws://localhost.firebaseio.test:5000');
 client.on('value', function(snap) {
 	console.log('Got value: ', snap.val());
 });
 ```
 
-Don't forget to point the host `test.firebaseio.com` to your local IP address (in `/etc/hosts` or similar).
+Don't forget to point the host `localhost.firebaseio.test` to your local IP address (in `/etc/hosts` or similar).
 
 For more information, read the [blog post in the offical Firebase blog](https://www.firebase.com/blog/2015-04-24-end-to-end-testing-firebase-server.html).
+
+### Command Line Interface
+
+This package installs a CLI script called `firebase-server`. The following command will
+start a firebase server on port 5555:
+
+	node_modules/.bin/firebase-server -p 5555
+	
+For more information, run:
+
+	node_modules/.bin/firebase-server -h
 
 ### FirebaseServer methods
 
 FirebaseServer instances have the following API:
 
-* `close()` - Stops the server (closes the server socket) 
+* `close(callback)` - Stops the server (closes the server socket) and then calls the callback
 * `getValue()` - Returns a promise that will be resolved with the current data on the server
 * `exportData()` - Returns a promise that will be resolved with the current data on the server, including priority values.
 	This is similar to [DataSnapshot.exportVal()](https://www.firebase.com/docs/web/api/datasnapshot/exportval.html).
-* `setRules(rules)` - Sets the security rules for the server. Uses the [targaryen](https://github.com/goldibex/targaryen) 
+* `setRules(rules)` - Sets the security rules for the server. Uses the [targaryen](https://github.com/goldibex/targaryen)
 	library for rule validation.
 * `setAuthSecret(secret)` - Sets the shared secret used for validating [Custom Authentication Tokens](https://www.firebase.com/docs/web/guide/login/custom.html).
 * `setTime(timestamp)` - Sets the server time. The server time is returned by [ServerValue.TIMESTAMP](https://www.firebase.com/docs/web/api/servervalue/timestamp.html)

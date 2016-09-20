@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.7.0 - 2016-08-13
+- Upgrade `ws` dependency to 1.1.1 (latest version)
+
+## 0.6.0 - 2016-06-22
+- Switch to Firebase 3.x. For firebase 2 support, use version 0.5.4 ([#51](https://github.com/urish/firebase-server/pull/51), contributed by [nfarina](https://github.com/nfarina))
+
+## 0.5.4 - 2016-03-08
+- Bugfix: large JSON messages spanning over several websocket frames cause errors ([#39](https://github.com/urish/firebase-server/pull/39), contributed by [abhishekgahlot](https://github.com/abhishekgahlot)) 
+
+## 0.5.3 - 2016-02-03
+- Add a `firebase-server` command line tool (CLI). See [README](README.md) for details.
+
+## 0.5.2 - 2016-01-06
+- Support admin authentication with raw secret ([#34](https://github.com/urish/firebase-server/pull/34)), contributed by [Alaneor](https://github.com/Alaneor)) 
+
+## 0.5.1 - 2015-12-13
+
+- Add callback on close ([#32](https://github.com/urish/firebase-server/pull/32)), contributed by [jamiemchale](https://github.com/jamiemchale))
+
 ## 0.5.0 - 2015-10-28
 - Add Custom Authentication ([#15](https://github.com/urish/firebase-server/pull/15), 
   [#25](https://github.com/urish/firebase-server/pull/25), [#26](https://github.com/urish/firebase-server/pull/26)
