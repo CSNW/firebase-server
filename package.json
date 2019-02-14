@@ -1,6 +1,6 @@
 {
   "name": "firebase-server",
-  "version": "0.5.8",
+  "version": "0.5.9",
   "description": "Simple Firebase Server",
   "main": "index.js",
   "scripts": {
@@ -30,22 +30,22 @@
     "CHANGELOG.md"
   ],
   "devDependencies": {
-    "babel": "5.8.23",
+    "babel": "^6.23.0",
     "bluebird": "2.10.2",
     "co": "4.6.0",
-    "coveralls": "2.11.4",
-    "eslint": "1.7.3",
+    "coveralls": "^3.0.2",
+    "eslint": "^5.13.0",
     "faye-websocket": "0.10.0",
     "firebase": "git+https://github.com/CSNW/firebase-bower.git#v2.3.2-permissive-url-parsing",
     "firebase-token-generator": "^2.0.0",
-    "istanbul": "0.4.0",
-    "mocha": "2.3.3",
+    "istanbul": "^0.4.5",
+    "mocha": "^5.2.0",
     "proxyquire": "^1.7.3"
   },
   "dependencies": {
-    "debug": "^2.2.0",
+    "debug": "^4.1.1",
     "jwt-simple": "^0.3.1",
-    "lodash": "4.7.11",
+    "lodash": "^4.7.11",
     "native-or-bluebird": "1.2.0",
     "targaryen": "2.0.0",
     "ws": "1.1.5"
