@@ -45,7 +45,7 @@
   "dependencies": {
     "debug": "^2.2.0",
     "jwt-simple": "^0.3.1",
-    "lodash": "3.10.1",
+    "lodash": "^4.17.11",
     "native-or-bluebird": "1.2.0",
     "targaryen": "2.0.0",
     "ws": "1.1.5"
