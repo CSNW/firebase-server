@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "debug": "^2.2.0",
-    "jwt-simple": "^0.3.1",
+    "jwt-simple": "^0.5.3",
     "lodash": "3.10.1",
     "native-or-bluebird": "1.2.0",
     "targaryen": "2.0.0",
