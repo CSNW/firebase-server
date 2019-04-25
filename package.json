@@ -30,7 +30,7 @@
     "CHANGELOG.md"
   ],
   "devDependencies": {
-    "babel": "5.8.23",
+    "babel": "^5.8.38",
     "bluebird": "2.10.2",
     "co": "4.6.0",
     "coveralls": "2.11.4",
@@ -38,14 +38,14 @@
     "faye-websocket": "0.10.0",
     "firebase": "git+https://github.com/CSNW/firebase-bower.git#v2.3.2-permissive-url-parsing",
     "firebase-token-generator": "^2.0.0",
-    "istanbul": "0.4.0",
+    "istanbul": "^0.4.5",
     "mocha": "2.3.3",
     "proxyquire": "^1.7.3"
   },
   "dependencies": {
     "debug": "^2.2.0",
     "jwt-simple": "^0.5.3",
-    "lodash": "3.10.1",
+    "lodash": "^4.17.11",
     "native-or-bluebird": "1.2.0",
     "targaryen": "2.0.0",
     "ws": "1.1.5"
