@@ -1,6 +1,6 @@
 {
   "name": "firebase-server",
-  "version": "0.5.12",
+  "version": "0.5.13",
   "description": "Simple Firebase Server",
   "main": "index.js",
   "scripts": {
@@ -45,7 +45,7 @@
   "dependencies": {
     "debug": "^2.2.0",
     "jwt-simple": "^0.5.3",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.12",
     "native-or-bluebird": "1.2.0",
     "targaryen": "2.0.0",
     "ws": "1.1.5"
